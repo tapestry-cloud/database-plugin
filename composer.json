@@ -22,5 +22,8 @@
     "psr-4": {
       "TapestryCloud\\Database\\": "src"
     }
+  },
+  "autoload-dev": {
+    "psr-4": { "Tests\\MockProject\\": "tests/mock_project" }
   }
 }
