@@ -1,0 +1,3 @@
+build_*
+.*_cache
+db.sqlite

@@ -1,6 +1,8 @@
 <?php
 
 namespace TapestryCloud\Database;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
 use Tapestry\Entities\Configuration;
@@ -11,7 +13,8 @@ class ServiceProvider extends AbstractServiceProvider implements BootableService
 {
     /** @var array */
     protected $provides = [
-        Exporter::class
+        //Exporter::class,
+        Connection::class
     ];
     /**
      * Use the register method to register items with the container via the
@@ -22,9 +25,17 @@ class ServiceProvider extends AbstractServiceProvider implements BootableService
      */
     public function register()
     {
-        $this->getContainer()->add(Exporter::class, function() {
-            return new Exporter();
+
+        $this->getContainer()->add(Connection::class, function() {
+            /** @var Configuration $configuration */
+            $configuration = $this->getContainer()->get(Configuration::class);
+            return DriverManager::getConnection($configuration->get('plugins.database', []), new \Doctrine\DBAL\Configuration());
         });
+
+        // $this->getContainer()->add(Exporter::class, function() {
+        //
+        //     return new Exporter();
+        // });
     }
     /**
      * Method will be invoked on registration of a service provider implementing
