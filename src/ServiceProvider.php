@@ -4,10 +4,15 @@ namespace TapestryCloud\Database;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
 use Tapestry\Entities\Configuration;
+use Tapestry\Entities\Project;
+use Tapestry\Tapestry;
+
 class ServiceProvider extends AbstractServiceProvider implements BootableServiceProviderInterface
 {
     /** @var array */
-    protected $provides = [];
+    protected $provides = [
+        Exporter::class
+    ];
     /**
      * Use the register method to register items with the container via the
      * protected $this->container property or the `getContainer` method
@@ -17,7 +22,9 @@ class ServiceProvider extends AbstractServiceProvider implements BootableService
      */
     public function register()
     {
-        // ...
+        $this->getContainer()->add(Exporter::class, function() {
+            return new Exporter();
+        });
     }
     /**
      * Method will be invoked on registration of a service provider implementing
@@ -28,10 +35,15 @@ class ServiceProvider extends AbstractServiceProvider implements BootableService
      */
     public function boot()
     {
-        /** @var Engine $engine */
-        $engine = $this->getContainer()->get(Engine::class);
-        /** @var Configuration $configuration */
-        $configuration = $this->getContainer()->get(Configuration::class);
-        // Place your plugin bootstrapping here...
+        /** @var Tapestry $tapestry */
+        $tapestry = $this->getContainer()->get(Tapestry::class);
+        /** @var Project $project */
+        $project = $this->getContainer()->get(Project::class);
+
+        $tapestry->getEventEmitter()->addListener('loadsourcefiles.after', function () use ($project) {
+            /** @var Exporter $exporter */
+            $exporter = $this->getContainer()->get(Exporter::class);
+            $exporter->export($project);
+        });
     }
 }

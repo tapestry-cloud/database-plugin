@@ -3,6 +3,7 @@
 namespace Tests\MockProject;
 
 use Tapestry\Modules\Kernel\KernelInterface;
+use TapestryCloud\Database\ServiceProvider;
 use Tapestry\Tapestry;
 
 class Kernel implements KernelInterface
@@ -38,6 +39,6 @@ class Kernel implements KernelInterface
      */
     public function boot()
     {
-        // TODO: Implement boot() method.
+        $this->tapestry->register(ServiceProvider::class);
     }
 }
