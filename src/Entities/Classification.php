@@ -2,6 +2,8 @@
 
 namespace TapestryCloud\Database\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * @Entity
  * @Table(name="classifications")
@@ -14,17 +16,38 @@ class Classification
     /** @Column(type="string") */
     private $name;
 
-    /** @ManyToOne(targetEntity="Taxonomy") */
+    /**
+     * @var \Doctrine\Common\Collections\Collection|Taxonomy[]
+     *
+     * @ManyToMany(targetEntity="Taxonomy", inversedBy="classification")
+     * @JoinTable(
+     *  name="taxonomy_classifications",
+     *  joinColumns={
+     *      @JoinColumn(name="classification_id", referencedColumnName="id")
+     *  },
+     *  inverseJoinColumns={
+     *      @JoinColumn(name="taxonomy_id", referencedColumnName="id")
+     *  }
+     * )
+     */
     private $taxonomy;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection|File[]
+     *
      * @ManyToMany(targetEntity="Classification")
-     * @JoinTable(name="files_classifications",
-     *      joinColumns={@JoinColumn(name="file_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@JoinColumn(name="classification_id", referencedColumnName="id")}
+     * @JoinTable(name="file_classifications",
+     *      joinColumns={@JoinColumn(name="classification_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@JoinColumn(name="file_id", referencedColumnName="id")}
      * )
      */
     private $files;
+
+    public function __construct()
+    {
+        $this->taxonomy = new ArrayCollection();
+        $this->files = new ArrayCollection();
+    }
 
     /**
      * @return string
@@ -38,4 +61,30 @@ class Classification
     {
         $this->name = $name;
     }
+
+    /**
+     * @param Taxonomy $taxonomy
+     */
+    public function addTaxonomy(Taxonomy $taxonomy)
+    {
+        if ($this->taxonomy->contains($taxonomy)) {
+            return;
+        }
+
+        $this->taxonomy->add($taxonomy);
+        $taxonomy->addClassification($this);
+    }
+
+    /**
+     * @param Taxonomy $taxonomy
+     */
+    public function removeTaxonomy(Taxonomy $taxonomy)
+    {
+        if (!$this->taxonomy->contains($taxonomy)) {
+            return;
+        }
+
+        $this->taxonomy->removeElement($taxonomy);
+    }
+
 }

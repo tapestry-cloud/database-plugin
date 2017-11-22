@@ -5,6 +5,7 @@ namespace TapestryCloud\Database\Synchronizes;
 use Doctrine\ORM\EntityManagerInterface;
 use Tapestry\Entities\Taxonomy as TapestryTaxonomy;
 use Tapestry\Modules\ContentTypes\ContentTypeFactory;
+use TapestryCloud\Database\Entities\Classification;
 use TapestryCloud\Database\Entities\ContentType;
 use TapestryCloud\Database\Entities\Environment;
 use TapestryCloud\Database\Entities\Taxonomy;
@@ -62,6 +63,19 @@ class ContentTypes
                 $contentType->addTaxonomy($record);
                 $this->em->persist($contentType);
                 $this->em->flush();
+
+                foreach ($taxonomy->getFileList() as $classification => $files) {
+
+                    if (! $classificationRecord = $this->em->getRepository(Classification::class)->findOneBy(['name' => $classification])){
+                        $classificationRecord = new Classification();
+                        $classificationRecord->setName($classification);
+                        $this->em->persist($classificationRecord);
+                    }
+
+                    $classificationRecord->addTaxonomy($record);
+                    $this->em->flush();
+                }
+
             }
         }
     }

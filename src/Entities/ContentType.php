@@ -2,6 +2,8 @@
 
 namespace TapestryCloud\Database\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Tapestry\Entities\ContentType as TapestryContentType;
 
 /**
@@ -10,29 +12,55 @@ use Tapestry\Entities\ContentType as TapestryContentType;
  */
 class ContentType
 {
-    /** @Id @Column(type="integer") @GeneratedValue */
+    /**
+     * @var int
+     * @Id @Column(type="integer") @GeneratedValue */
     private $id;
 
-    /** @ManyToOne(targetEntity="Environment") */
+    /**
+     * @var Environment
+     * @ManyToOne(targetEntity="Environment") */
     private $environment;
 
-    /** @Column(type="string") */
+    /**
+     * @var string
+     * @Column(type="string") */
     private $name;
 
-    /** @Column(type="string") */
+    /**
+     * @var string
+     * @Column(type="string") */
     private $path;
 
-    /** @Column(type="string") */
+    /**
+     * @var string
+     * @Column(type="string") */
     private $template;
 
-    /** @Column(type="string") */
+    /**
+     * @var string
+     * @Column(type="string") */
     private $permalink;
 
-    /** @Column(type="boolean") */
+    /**
+     * @var bool
+     * @Column(type="boolean") */
     private $enabled;
 
-    /** @OnetoMany(targetEntity="Taxonomy", mappedBy="content_type_id") */
+    /**
+     * @var Collection|Taxonomy[]
+     *
+     * @OneToMany(targetEntity="Taxonomy", mappedBy="contentType")
+     */
     private $taxonomy;
+
+    /**
+     * ContentType constructor.
+     */
+    public function __construct()
+    {
+        $this->taxonomy = new ArrayCollection();
+    }
 
     /**
      * ContentType Hydration
@@ -91,7 +119,7 @@ class ContentType
     }
 
     /**
-     * @return Environment[]
+     * @return Environment
      */
     public function getEnvironment()
     {
@@ -104,15 +132,35 @@ class ContentType
     }
 
     /**
-     * @return Taxonomy[]
+     * @return Collection|Taxonomy[]
      */
     public function getTaxonomy()
     {
         return $this->taxonomy;
     }
 
+    /**
+     * @param Taxonomy $taxonomy
+     */
     public function addTaxonomy(Taxonomy $taxonomy)
     {
-        $this->taxonomy[] = $taxonomy;
+        if ($this->taxonomy->contains($taxonomy)) {
+            return;
+        }
+
+        $this->taxonomy->add($taxonomy);
+        $taxonomy->setContentType($this);
+    }
+
+    /**
+     * @param Taxonomy $taxonomy
+     */
+    public function removeTaxonomy(Taxonomy $taxonomy)
+    {
+        if (!$this->taxonomy->contains($taxonomy)) {
+            return;
+        }
+
+        $this->taxonomy->removeElement($taxonomy);
     }
 }
