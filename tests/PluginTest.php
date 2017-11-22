@@ -10,10 +10,17 @@ use Tapestry\Entities\Configuration;
 use Tapestry\Entities\Project;
 use Tapestry\Generator;
 use Tapestry\Tapestry;
+use TapestryCloud\Database\Entities\Classification;
+use TapestryCloud\Database\Entities\ContentType;
+use TapestryCloud\Database\Entities\File;
+use TapestryCloud\Database\Entities\Taxonomy;
 
 class PluginTest extends \PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @var EntityManager
+     */
     protected static $em;
 
     /**
@@ -35,6 +42,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase
             )
         );
         $tool = new SchemaTool($em);
+        $tool->dropDatabase();
         $tool->createSchema($em->getMetadataFactory()->getAllMetadata());
 
         self::$em = $em;
@@ -66,8 +74,34 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         $project = $tapestry->getContainer()->get(Project::class);
         $generator->generate($project, new NullOutput());
 
-        /** @var Project $project */
-        //$project = $tapestry->getContainer()->get(Project::class);
+        $contentTypes = self::$em->getRepository(ContentType::class)->findAll();
+
+        $this->assertCount(2, $contentTypes);
+
+        /** @var ContentType $contentType */
+        foreach ($contentTypes as $contentType) {
+            $env = $contentType->getEnvironment();
+            $this->assertEquals('testing', $env->getName());
+
+            if ($contentType->getName() === 'blog'){
+                $taxonomies = $contentType->getTaxonomy();
+                $this->assertCount(2, $taxonomies);
+
+                /** @var Taxonomy $taxonomy */
+                foreach ($taxonomies as $taxonomy) {
+                    if ($taxonomy->getName() === 'tag') {
+                        $classifications = $taxonomy->getClassifications();
+                        $this->assertCount(2, $classifications);
+                    }
+                }
+            }
+        }
+
+        $files = self::$em->getRepository(File::class)->findAll();
+        $this->assertCount(3, $files);
+
+        $classifications = self::$em->getRepository(Classification::class)->findAll();
+        $this->assertCount(4, $classifications);
 
         $n = 1;
     }

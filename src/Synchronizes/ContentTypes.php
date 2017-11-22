@@ -8,6 +8,7 @@ use Tapestry\Modules\ContentTypes\ContentTypeFactory;
 use TapestryCloud\Database\Entities\Classification;
 use TapestryCloud\Database\Entities\ContentType;
 use TapestryCloud\Database\Entities\Environment;
+use TapestryCloud\Database\Entities\File;
 use TapestryCloud\Database\Entities\Taxonomy;
 
 class ContentTypes
@@ -35,7 +36,7 @@ class ContentTypes
                 $this->em->persist($record);
                 $this->em->flush();
 
-                $this->syncTaxonomyToContentType($record, $contentType->getTaxonomies());
+                $this->syncTaxonomyToContentType($record, $contentType->getTaxonomies(), $environment);
                 continue;
             }
 
@@ -46,11 +47,9 @@ class ContentTypes
     /**
      * @param ContentType $contentType
      * @param TapestryTaxonomy[] $taxonomies
+     * @param Environment $environment
      */
-    private function syncTaxonomyToContentType(ContentType $contentType, array $taxonomies) {
-
-        $n = $contentType->getTaxonomy();
-        $p = 1;
+    private function syncTaxonomyToContentType(ContentType $contentType, array $taxonomies, Environment $environment) {
 
         /** @var TapestryTaxonomy $taxonomy */
         foreach($taxonomies as $taxonomy) {
@@ -65,7 +64,6 @@ class ContentTypes
                 $this->em->flush();
 
                 foreach ($taxonomy->getFileList() as $classification => $files) {
-
                     if (! $classificationRecord = $this->em->getRepository(Classification::class)->findOneBy(['name' => $classification])){
                         $classificationRecord = new Classification();
                         $classificationRecord->setName($classification);
@@ -74,6 +72,15 @@ class ContentTypes
 
                     $classificationRecord->addTaxonomy($record);
                     $this->em->flush();
+
+                    foreach(array_keys($files) as $filename) {
+                        /** @var File $file */
+                        if ($file = $this->em->getRepository(File::class)->findOneBy(['uid' => $filename, 'environment' => $environment->getId()])){
+                            $file->addClassification($classificationRecord);
+                            $this->em->flush();
+                        }
+                    }
+
                 }
             }
         }

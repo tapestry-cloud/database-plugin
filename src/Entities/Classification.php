@@ -21,7 +21,7 @@ class Classification
      *
      * @ManyToMany(targetEntity="Taxonomy", inversedBy="classification")
      * @JoinTable(
-     *  name="taxonomy_classifications",
+     *  name="classifications_taxonomy",
      *  joinColumns={
      *      @JoinColumn(name="classification_id", referencedColumnName="id")
      *  },
@@ -35,11 +35,7 @@ class Classification
     /**
      * @var \Doctrine\Common\Collections\Collection|File[]
      *
-     * @ManyToMany(targetEntity="Classification")
-     * @JoinTable(name="file_classifications",
-     *      joinColumns={@JoinColumn(name="classification_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@JoinColumn(name="file_id", referencedColumnName="id")}
-     * )
+     * @ManyToMany(targetEntity="File", mappedBy="classifications")
      */
     private $files;
 
