@@ -8,14 +8,28 @@ namespace TapestryCloud\Database\Entities;
  */
 class File
 {
-    /** @Id @Column(type="integer") @GeneratedValue */
+    /**
+     * @var int
+     * @Id @Column(type="integer") @GeneratedValue */
     private $id;
 
-    /** @ManyToOne(targetEntity="Environment") */
+    /**
+     * @var Environment
+     * @ManyToOne(targetEntity="Environment") */
     private $environment;
 
-    /** @Column(type="string") */
+    /**
+     * @var string
+     * @Column(type="string") */
     private $uid;
+
+    public function hydrate(\Tapestry\Entities\File $file, Environment $environment = null) {
+        $this->uid = $file->getUid();
+
+        if (!is_null($environment)) {
+            $this->setEnvironment($environment);
+        }
+    }
 
     /**
      * @return string
@@ -28,5 +42,21 @@ class File
     public function setUid($uid)
     {
         $this->uid = $uid;
+    }
+
+    /**
+     * @return Environment
+     */
+    public function getEnvironment()
+    {
+        return $this->environment;
+    }
+
+    /**
+     * @param Environment $environment
+     */
+    public function setEnvironment(Environment $environment)
+    {
+        $this->environment = $environment;
     }
 }

@@ -29,7 +29,7 @@ class ContentTypes
     public function sync(ContentTypeFactory $contentTypeFactory, Environment $environment) {
         foreach($contentTypeFactory->all() as $contentType) {
             if (!$record = $this->em->getRepository(ContentType::class)->findOneBy(['name' => $contentType->getName(), 'environment' => $environment->getId()])){
-                // create and save
+                // INSERT
                 $record = new ContentType();
                 $record->hydrate($contentType, $environment);
                 $this->em->persist($record);
@@ -39,7 +39,7 @@ class ContentTypes
                 continue;
             }
 
-            // update and save
+            // UPDATE
         }
     }
 
@@ -75,7 +75,6 @@ class ContentTypes
                     $classificationRecord->addTaxonomy($record);
                     $this->em->flush();
                 }
-
             }
         }
     }

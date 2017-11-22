@@ -126,6 +126,9 @@ class ContentType
         return $this->environment;
     }
 
+    /**
+     * @param Environment $environment
+     */
     public function setEnvironment(Environment $environment)
     {
         $this->environment = $environment;
