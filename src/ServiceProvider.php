@@ -3,6 +3,9 @@
 namespace TapestryCloud\Database;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Setup;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Container\ServiceProvider\BootableServiceProviderInterface;
 use Tapestry\Entities\Configuration;
@@ -13,7 +16,7 @@ class ServiceProvider extends AbstractServiceProvider implements BootableService
 {
     /** @var array */
     protected $provides = [
-        //Exporter::class,
+        EntityManagerInterface::class,
         Connection::class
     ];
     /**
@@ -30,6 +33,21 @@ class ServiceProvider extends AbstractServiceProvider implements BootableService
             /** @var Configuration $configuration */
             $configuration = $this->getContainer()->get(Configuration::class);
             return DriverManager::getConnection($configuration->get('plugins.database', []), new \Doctrine\DBAL\Configuration());
+        });
+
+        $this->getContainer()->add(EntityManagerInterface::class, function() {
+            /** @var Configuration $configuration */
+            $configuration = $this->getContainer()->get(Configuration::class);
+
+            return EntityManager::create(
+                $configuration->get('plugins.database', []),
+                Setup::createAnnotationMetadataConfiguration(
+                    [
+                        realpath(__DIR__ . DIRECTORY_SEPARATOR . 'Entities')
+                    ],
+                    $configuration->get('debug', false)
+                )
+            );
         });
 
         // $this->getContainer()->add(Exporter::class, function() {
