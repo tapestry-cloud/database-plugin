@@ -9,8 +9,10 @@ use Tapestry\Entities\Collections\FlatCollection;
 use Tapestry\Entities\Project;
 use Doctrine\DBAL\Connection;
 use Tapestry\Modules\ContentTypes\ContentTypeFactory;
+use TapestryCloud\Database\Entities\ContentType;
 use TapestryCloud\Database\Entities\Environment;
 use TapestryCloud\Database\Entities\File;
+use TapestryCloud\Database\Synchronizes\ContentTypes;
 
 class Exporter {
 
@@ -68,15 +70,18 @@ class Exporter {
             $this->entityManager->flush();
         }
 
-        /** @var \Tapestry\Entities\File $file */
-        foreach ($files as $file) {
-            $fileRecord = new File();
-            $fileRecord->setUid($file->getUid());
-            $environment->addFile($fileRecord);
-            $this->entityManager->persist($fileRecord);
-        }
+        // /** @var \Tapestry\Entities\File $file */
+        // foreach ($files as $file) {
+        //     $fileRecord = new File();
+        //     $fileRecord->setUid($file->getUid());
+        //     $environment->addFile($fileRecord);
+        //     $this->entityManager->persist($fileRecord);
+        // }
 
-        $this->entityManager->flush();
+        // $this->entityManager->flush();
+
+        $contentTypeSync = new ContentTypes($this->entityManager);
+        $contentTypeSync->sync($contentTypes, $environment);
 
     }
 }

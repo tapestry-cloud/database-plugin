@@ -20,6 +20,14 @@ class Environment
     /** @OneToMany(targetEntity="File", mappedBy="environment_id") */
     private $files;
 
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getName()
     {
         return $this->name;

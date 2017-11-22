@@ -2,6 +2,8 @@
 
 namespace TapestryCloud\Database\Entities;
 
+use Tapestry\Entities\Taxonomy as TapestryTaxonomy;
+
 /**
  * @Entity
  * @Table(name="taxonomies")
@@ -16,6 +18,15 @@ class Taxonomy
 
     /** @OnetoMany(targetEntity="Classification", mappedBy="taxonomy_id") */
     private $classifications;
+
+    /**
+     * Taxonomy Hydration.
+     * @param TapestryTaxonomy $taxonomy
+     */
+    public function hydrate(TapestryTaxonomy $taxonomy)
+    {
+        $this->name = $taxonomy->getName();
+    }
 
     /**
      * @return string

@@ -2,6 +2,8 @@
 
 namespace TapestryCloud\Database\Entities;
 
+use Tapestry\Entities\ContentType as TapestryContentType;
+
 /**
  * @Entity
  * @Table(name="content_types")
@@ -31,6 +33,22 @@ class ContentType
 
     /** @OnetoMany(targetEntity="Taxonomy", mappedBy="content_type_id") */
     private $taxonomy;
+
+    /**
+     * ContentType Hydration
+     *
+     * @param TapestryContentType $contentType
+     * @param Environment $environment
+     */
+    public function hydrate(TapestryContentType $contentType, Environment $environment)
+    {
+        $this->name = $contentType->getName();
+        $this->path = $contentType->getPath();
+        $this->template = $contentType->getTemplate();
+        $this->permalink = $contentType->getPermalink();
+        $this->enabled = $contentType->isEnabled();
+        $this->setEnvironment($environment);
+    }
 
     /**
      * @return string
@@ -78,5 +96,23 @@ class ContentType
     public function getEnvironment()
     {
         return $this->environment;
+    }
+
+    public function setEnvironment(Environment $environment)
+    {
+        $this->environment = $environment;
+    }
+
+    /**
+     * @return Taxonomy[]
+     */
+    public function getTaxonomy()
+    {
+        return $this->taxonomy;
+    }
+
+    public function addTaxonomy(Taxonomy $taxonomy)
+    {
+        $this->taxonomy[] = $taxonomy;
     }
 }
