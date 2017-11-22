@@ -59,10 +59,10 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         $tool->dropDatabase();
     }
 
-    public function testPlugin(){
+    public static function runTapestry($siteDir = __DIR__ . DIRECTORY_SEPARATOR . 'mock_project') {
         $definitions = new DefaultInputDefinition();
         $tapestry = new Tapestry(new ArrayInput([
-            '--site-dir' => __DIR__ . DIRECTORY_SEPARATOR . 'mock_project',
+            '--site-dir' => $siteDir,
             '--env' => 'testing'
         ], $definitions));
 
@@ -73,6 +73,12 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         /** @var Project $project */
         $project = $tapestry->getContainer()->get(Project::class);
         $generator->generate($project, new NullOutput());
+
+        return $tapestry;
+    }
+
+    public function testPlugin(){
+        self::runTapestry();
 
         $contentTypes = self::$em->getRepository(ContentType::class)->findAll();
 
