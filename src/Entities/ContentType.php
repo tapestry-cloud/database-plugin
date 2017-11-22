@@ -29,6 +29,9 @@ class ContentType
     /** @Column(type="boolean") */
     private $enabled;
 
+    /** @OnetoMany(targetEntity="Taxonomy", mappedBy="content_type_id") */
+    private $taxonomy;
+
     /**
      * @return string
      */
