@@ -42,10 +42,6 @@ class Exporter {
         /** @var array $cmdOptions */
         $cmdOptions = $project->get('cmd_options');
 
-        // 1. Create env record if none found for current environment
-        // $environment = new Environment();
-        // $environment->name = $cmdOptions['env'];
-
         if (! $environment = $this->entityManager->getRepository(Environment::class)->findOneBy(['name' => $cmdOptions['env']])) {
             $environment = new Environment();
             $environment->setName($cmdOptions['env']);
