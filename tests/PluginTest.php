@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Tapestry\Console\DefaultInputDefinition;
 use Tapestry\Entities\Configuration;
@@ -69,7 +70,10 @@ class PluginTest extends \PHPUnit_Framework_TestCase
             '--env' => 'testing'
         ], $definitions));
 
-        $tapestry->setOutput(new NullOutput());
+
+        $bufferedOutput = new BufferedOutput();
+
+        $tapestry->setOutput($bufferedOutput);
 
         /** @var array $steps */
         $steps = $tapestry->getContainer()->get('Compile.Steps');
@@ -77,9 +81,9 @@ class PluginTest extends \PHPUnit_Framework_TestCase
 
         /** @var Project $project */
         $project = $tapestry->getContainer()->get(Project::class);
-        $generator->generate($project, new NullOutput());
+        $generator->generate($project, $bufferedOutput);
 
-        return $tapestry;
+        return $bufferedOutput;
     }
 
     /**
@@ -89,7 +93,9 @@ class PluginTest extends \PHPUnit_Framework_TestCase
     {
         $loops = 0;
         while ($loops < 2) {
-            self::runTapestry();
+            $output = self::runTapestry();
+            $this->assertContains('[$] Syncing with database.', $output->fetch());
+
             $contentTypes = self::$em->getRepository(ContentType::class)->findAll();
             $this->assertCount(2, $contentTypes);
 
