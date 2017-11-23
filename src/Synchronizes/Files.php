@@ -7,6 +7,7 @@ use Tapestry\Entities\Collections\FlatCollection;
 use Tapestry\Entities\File as TapestryFile;
 use TapestryCloud\Database\Entities\Environment;
 use TapestryCloud\Database\Entities\File;
+use TapestryCloud\Database\Hydrators\File as FileHydrator;
 
 class Files
 {
@@ -16,12 +17,19 @@ class Files
     private $em;
 
     /**
+     * @var FileHydrator
+     */
+    private $fileHydrator;
+
+    /**
      * ContentTypes constructor.
      * @param EntityManagerInterface $em
+     * @param FileHydrator $fileHydrator
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, FileHydrator $fileHydrator)
     {
         $this->em = $em;
+        $this->fileHydrator = $fileHydrator;
     }
 
     public function sync(FlatCollection $files, Environment $environment) {
@@ -30,12 +38,10 @@ class Files
         foreach ($files as $file) {
 
             if (!$record = $this->em->getRepository(File::class)->findOneBy(['uid' => $file->getuid(), 'environment' => $environment->getId()])) {
-                // INSERT
                 $record = new File();
-                $record->hydrate($file, $environment);
             }
 
-            // UPDATE
+            $this->fileHydrator->hydrate($record, $file, $environment);
             $this->em->persist($record);
         }
 

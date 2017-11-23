@@ -14,6 +14,7 @@ use TapestryCloud\Database\Entities\Environment;
 use TapestryCloud\Database\Entities\File;
 use TapestryCloud\Database\Synchronizes\ContentTypes;
 use TapestryCloud\Database\Synchronizes\Files;
+use TapestryCloud\Database\Hydrators\File as FileHydrator;
 
 class Exporter {
 
@@ -71,7 +72,7 @@ class Exporter {
             $this->entityManager->flush();
         }
 
-        $fileSync = new Files($this->entityManager);
+        $fileSync = new Files($this->entityManager, new FileHydrator($this->entityManager));
         $fileSync->sync($files, $environment);
 
         $contentTypeSync = new ContentTypes($this->entityManager);

@@ -4,7 +4,6 @@ namespace TapestryCloud\Database\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Tapestry\Modules\Content\FrontMatter as TapestryFrontMatter;
 
 /**
  * @Entity
@@ -84,7 +83,7 @@ class File
 
     /**
      * @var Collection|FrontMatter[]
-     * @OneToMany(targetEntity="FrontMatter", mappedBy="file_id")
+     * @OneToMany(targetEntity="FrontMatter", mappedBy="file")
      */
     private $frontMatter;
 
@@ -95,37 +94,6 @@ class File
     {
         $this->classifications = new ArrayCollection();
         $this->frontMatter = new ArrayCollection();
-    }
-
-    /**
-     * File Hydration.
-     *
-     * @param \Tapestry\Entities\File $file
-     * @param Environment|null $environment
-     */
-    public function hydrate(\Tapestry\Entities\File $file, Environment $environment = null)
-    {
-        $this->setUid($file->getUid());
-        $this->setLastModified($file->getLastModified());
-        $this->setFilename($file->getFilename());
-        $this->setExt($file->getExt());
-        $this->setPath($file->getPath());
-        $this->setToCopy($file->isToCopy());
-
-        if (! $file->isToCopy()) {
-            $frontMatter = new TapestryFrontMatter($file->getFileContent());
-            $this->setContent($frontMatter->getContent());
-            foreach($frontMatter->getData() as $key => $value) {
-                $fmRecord = new FrontMatter();
-                $fmRecord->setName($key);
-                $fmRecord->setValue($value);
-                $this->addFrontMatter($fmRecord);
-            }
-        }
-
-        if (!is_null($environment)) {
-            $this->setEnvironment($environment);
-        }
     }
 
     //
@@ -154,6 +122,7 @@ class File
         }
 
         $this->frontMatter->add($frontMatter);
+        $frontMatter->setFile($this);
     }
 
     /**
