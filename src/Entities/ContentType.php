@@ -14,37 +14,44 @@ class ContentType
 {
     /**
      * @var int
-     * @Id @Column(type="integer") @GeneratedValue */
+     * @Id @Column(type="integer") @GeneratedValue
+     */
     private $id;
 
     /**
      * @var Environment
-     * @ManyToOne(targetEntity="Environment") */
+     * @ManyToOne(targetEntity="Environment")
+     */
     private $environment;
 
     /**
      * @var string
-     * @Column(type="string") */
+     * @Column(type="string")
+     */
     private $name;
 
     /**
      * @var string
-     * @Column(type="string") */
+     * @Column(type="string")
+     */
     private $path;
 
     /**
      * @var string
-     * @Column(type="string") */
+     * @Column(type="string")
+     */
     private $template;
 
     /**
      * @var string
-     * @Column(type="string") */
+     * @Column(type="string")
+     */
     private $permalink;
 
     /**
      * @var bool
-     * @Column(type="boolean") */
+     * @Column(type="boolean")
+     */
     private $enabled;
 
     /**

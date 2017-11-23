@@ -15,13 +15,15 @@ class Taxonomy
     /**
      * @var int
      *
-     * @Id @Column(type="integer") @GeneratedValue */
+     * @Id @Column(type="integer") @GeneratedValue
+     */
     private $id;
 
     /**
      * @var string
      *
-     * @Column(type="string") */
+     * @Column(type="string")
+     */
     private $name;
 
 
@@ -74,7 +76,8 @@ class Taxonomy
         return $this->contentType;
     }
 
-    public function setContentType(ContentType $contentType) {
+    public function setContentType(ContentType $contentType)
+    {
         $this->contentType = $contentType;
     }
 

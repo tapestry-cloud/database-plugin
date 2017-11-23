@@ -18,7 +18,7 @@ class File extends Hydrator
      * @param \Tapestry\Entities\File $file
      * @param Environment|null $environment
      */
-    public function hydrate(Model $model,  \Tapestry\Entities\File $file, Environment $environment = null)
+    public function hydrate(Model $model, \Tapestry\Entities\File $file, Environment $environment = null)
     {
         $model->setUid($file->getUid());
         $model->setLastModified($file->getLastModified());
@@ -27,10 +27,10 @@ class File extends Hydrator
         $model->setPath($file->getPath());
         $model->setToCopy($file->isToCopy());
 
-        if (! $file->isToCopy()) {
+        if (!$file->isToCopy()) {
             $frontMatter = new TapestryFrontMatter($file->getFileContent());
             $model->setContent($frontMatter->getContent());
-            foreach($frontMatter->getData() as $key => $value) {
+            foreach ($frontMatter->getData() as $key => $value) {
                 $fmRecord = new FrontMatter();
                 $fmRecord->setName($key);
                 $fmRecord->setValue(json_encode($value));

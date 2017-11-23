@@ -10,17 +10,20 @@ class FrontMatter
 {
     /**
      * @var int
-     * @Id @Column(type="integer") @GeneratedValue */
+     * @Id @Column(type="integer") @GeneratedValue
+     */
     private $id;
 
     /**
      * @var string
-     * @Column(type="string") */
+     * @Column(type="string")
+     */
     private $name;
 
     /**
      * @var string
-     * @Column(type="string") */
+     * @Column(type="string")
+     */
     private $value;
 
     /** @ManyToOne(targetEntity="File") */

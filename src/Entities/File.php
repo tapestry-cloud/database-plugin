@@ -116,7 +116,8 @@ class File
         $this->environment = $environment;
     }
 
-    public function addFrontMatter(FrontMatter $frontMatter) {
+    public function addFrontMatter(FrontMatter $frontMatter)
+    {
         if ($this->frontMatter->contains($frontMatter)) {
             return;
         }

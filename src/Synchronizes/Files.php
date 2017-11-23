@@ -32,7 +32,8 @@ class Files
         $this->fileHydrator = $fileHydrator;
     }
 
-    public function sync(FlatCollection $files, Environment $environment) {
+    public function sync(FlatCollection $files, Environment $environment)
+    {
 
         /** @var TapestryFile $file */
         foreach ($files as $file) {

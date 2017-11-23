@@ -43,7 +43,8 @@ class Environment
         return $this->contentTypes;
     }
 
-    public function addContentType(ContentType $contentType) {
+    public function addContentType(ContentType $contentType)
+    {
         $this->contentTypes[] = $contentType;
     }
 
@@ -52,7 +53,8 @@ class Environment
         return $this->files;
     }
 
-    public function addFile(File $file) {
+    public function addFile(File $file)
+    {
         $this->files[] = $file;
     }
 }

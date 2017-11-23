@@ -4,21 +4,18 @@ namespace TapestryCloud\Database;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use PDO;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tapestry\Entities\Collections\FlatCollection;
 use Tapestry\Entities\Project;
-use Doctrine\DBAL\Connection;
 use Tapestry\Modules\ContentTypes\ContentTypeFactory;
 use Tapestry\Tapestry;
-use TapestryCloud\Database\Entities\ContentType;
 use TapestryCloud\Database\Entities\Environment;
-use TapestryCloud\Database\Entities\File;
 use TapestryCloud\Database\Synchronizes\ContentTypes;
 use TapestryCloud\Database\Synchronizes\Files;
 use TapestryCloud\Database\Hydrators\File as FileHydrator;
 
-class Exporter {
+class Exporter
+{
     /**
      * @var EntityManagerInterface|EntityManager
      */
@@ -40,7 +37,8 @@ class Exporter {
 
     }
 
-    public function export(Project $project) {
+    public function export(Project $project)
+    {
 
         $this->output->writeln('[$] Syncing with database.');
 
@@ -53,7 +51,7 @@ class Exporter {
         /** @var array $cmdOptions */
         $cmdOptions = $project->get('cmd_options');
 
-        if (! $environment = $this->entityManager->getRepository(Environment::class)->findOneBy(['name' => $cmdOptions['env']])) {
+        if (!$environment = $this->entityManager->getRepository(Environment::class)->findOneBy(['name' => $cmdOptions['env']])) {
             $environment = new Environment();
             $environment->setName($cmdOptions['env']);
             $this->entityManager->persist($environment);
