@@ -69,6 +69,8 @@ class PluginTest extends \PHPUnit_Framework_TestCase
             '--env' => 'testing'
         ], $definitions));
 
+        $tapestry->setOutput(new NullOutput());
+
         /** @var array $steps */
         $steps = $tapestry->getContainer()->get('Compile.Steps');
         $generator = new Generator($steps, $tapestry);
