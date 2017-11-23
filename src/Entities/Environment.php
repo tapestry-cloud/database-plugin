@@ -2,6 +2,8 @@
 
 namespace TapestryCloud\Database\Entities;
 
+use Doctrine\Common\Collections\Collection;
+
 /**
  * @Entity
  * @Table(name="environments")
@@ -38,6 +40,9 @@ class Environment
         $this->name = $name;
     }
 
+    /**
+     * @return Collection|ContentType[]
+     */
     public function getContentTypes()
     {
         return $this->contentTypes;
@@ -48,6 +53,9 @@ class Environment
         $this->contentTypes[] = $contentType;
     }
 
+    /**
+     * @return Collection|File[]
+     */
     public function getFiles()
     {
         return $this->files;
