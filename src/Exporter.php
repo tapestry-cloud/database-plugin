@@ -17,12 +17,6 @@ use TapestryCloud\Database\Synchronizes\Files;
 use TapestryCloud\Database\Hydrators\File as FileHydrator;
 
 class Exporter {
-
-    /**
-     * @var Connection
-     */
-    private $connection;
-
     /**
      * @var EntityManagerInterface|EntityManager
      */
@@ -30,24 +24,11 @@ class Exporter {
 
     /**
      * Exporter constructor.
-     * @param Connection $connection
      * @param EntityManagerInterface $entityManager
      * @throws \Exception
      */
-    public function __construct(Connection $connection, EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->connection = $connection;
-        if (!$this->connection->connect()) {
-            throw new \Exception('Unable to connect to database');
-        }
-
-        $tables = $this->connection->getSchemaManager()->listTables();
-
-        $migrator = new Migrator($this->connection);
-        if (count($tables) < $migrator->tables()) {
-            //$migrator->migrate();
-        }
-
         $this->entityManager = $entityManager;
     }
 
@@ -77,6 +58,5 @@ class Exporter {
 
         $contentTypeSync = new ContentTypes($this->entityManager);
         $contentTypeSync->sync($contentTypes, $environment);
-
     }
 }
