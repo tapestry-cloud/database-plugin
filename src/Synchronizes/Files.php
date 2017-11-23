@@ -36,7 +36,6 @@ class Files
             }
 
             // UPDATE
-
             $this->em->persist($record);
         }
 

@@ -50,10 +50,9 @@ class ContentTypes
      * @param Environment $environment
      */
     private function syncTaxonomyToContentType(ContentType $contentType, array $taxonomies, Environment $environment) {
-
         /** @var TapestryTaxonomy $taxonomy */
         foreach($taxonomies as $taxonomy) {
-            if (!$record = $this->em->getRepository(Taxonomy::class)->findOneBy(['name' => $taxonomy->getName()])){
+            if (!$record = $this->em->getRepository(Taxonomy::class)->findOneBy(['name' => $taxonomy->getName()])) {
                 $record = new Taxonomy();
                 $record->hydrate($taxonomy);
                 $this->em->persist($record);
@@ -62,26 +61,27 @@ class ContentTypes
                 $contentType->addTaxonomy($record);
                 $this->em->persist($contentType);
                 $this->em->flush();
+            }
 
-                foreach ($taxonomy->getFileList() as $classification => $files) {
-                    if (! $classificationRecord = $this->em->getRepository(Classification::class)->findOneBy(['name' => $classification])){
-                        $classificationRecord = new Classification();
-                        $classificationRecord->setName($classification);
-                        $this->em->persist($classificationRecord);
-                    }
-
-                    $classificationRecord->addTaxonomy($record);
-                    $this->em->flush();
-
-                    foreach(array_keys($files) as $filename) {
-                        /** @var File $file */
-                        if ($file = $this->em->getRepository(File::class)->findOneBy(['uid' => $filename, 'environment' => $environment->getId()])){
-                            $file->addClassification($classificationRecord);
-                            $this->em->flush();
-                        }
-                    }
-
+            foreach ($taxonomy->getFileList() as $classification => $files) {
+                if (! $classificationRecord = $this->em->getRepository(Classification::class)->findOneBy(['name' => $classification])){
+                    $classificationRecord = new Classification();
+                    $classificationRecord->setName($classification);
+                    $this->em->persist($classificationRecord);
                 }
+
+                $classificationRecord->addTaxonomy($record);
+                $this->em->flush();
+
+                foreach(array_keys($files) as $filename) {
+                    /** @var File $file */
+                    if ($file = $this->em->getRepository(File::class)->findOneBy(['uid' => $filename, 'environment' => $environment->getId()])){
+                        $file->addClassification($classificationRecord);
+                        $this->em->persist($file);
+                    }
+                }
+
+                $this->em->flush();
             }
         }
     }

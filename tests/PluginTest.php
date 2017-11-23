@@ -1,5 +1,7 @@
 <?php
+
 namespace TapestryCloud\Asset\Tests;
+
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
@@ -33,7 +35,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         $configuration = new Configuration(include __DIR__ . '/mock_project/config.php');
 
         $em = EntityManager::create(
-        $configuration->get('plugins.database', []),
+            $configuration->get('plugins.database', []),
             Setup::createAnnotationMetadataConfiguration(
                 [
                     realpath(__DIR__ . '/../src/Entities')
@@ -59,7 +61,8 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         $tool->dropDatabase();
     }
 
-    public static function runTapestry($siteDir = __DIR__ . DIRECTORY_SEPARATOR . 'mock_project') {
+    public static function runTapestry($siteDir = __DIR__ . DIRECTORY_SEPARATOR . 'mock_project')
+    {
         $definitions = new DefaultInputDefinition();
         $tapestry = new Tapestry(new ArrayInput([
             '--site-dir' => $siteDir,
@@ -77,38 +80,52 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         return $tapestry;
     }
 
-    public function testPlugin(){
-        self::runTapestry();
+    /**
+     * This tests that records are inserted and not duplicated when ran multiple times.
+     */
+    public function testNoChangeRunThrough()
+    {
+        $loops = 0;
+        while ($loops < 2) {
+            self::runTapestry();
+            $contentTypes = self::$em->getRepository(ContentType::class)->findAll();
+            $this->assertCount(2, $contentTypes);
 
-        $contentTypes = self::$em->getRepository(ContentType::class)->findAll();
+            /** @var ContentType $contentType */
+            foreach ($contentTypes as $contentType) {
+                $env = $contentType->getEnvironment();
+                $this->assertEquals('testing', $env->getName());
 
-        $this->assertCount(2, $contentTypes);
+                if ($contentType->getName() === 'blog') {
+                    $taxonomies = $contentType->getTaxonomy();
+                    $this->assertCount(2, $taxonomies);
 
-        /** @var ContentType $contentType */
-        foreach ($contentTypes as $contentType) {
-            $env = $contentType->getEnvironment();
-            $this->assertEquals('testing', $env->getName());
-
-            if ($contentType->getName() === 'blog'){
-                $taxonomies = $contentType->getTaxonomy();
-                $this->assertCount(2, $taxonomies);
-
-                /** @var Taxonomy $taxonomy */
-                foreach ($taxonomies as $taxonomy) {
-                    if ($taxonomy->getName() === 'tag') {
-                        $classifications = $taxonomy->getClassifications();
-                        $this->assertCount(2, $classifications);
+                    /** @var Taxonomy $taxonomy */
+                    foreach ($taxonomies as $taxonomy) {
+                        if ($taxonomy->getName() === 'tag') {
+                            $classifications = $taxonomy->getClassifications();
+                            $this->assertCount(2, $classifications);
+                        }
                     }
                 }
             }
+
+            $files = self::$em->getRepository(File::class)->findAll();
+            $this->assertCount(3, $files);
+
+            $classifications = self::$em->getRepository(Classification::class)->findAll();
+            $this->assertCount(4, $classifications);
+            $loops++;
         }
 
-        $files = self::$em->getRepository(File::class)->findAll();
-        $this->assertCount(3, $files);
-
-        $classifications = self::$em->getRepository(Classification::class)->findAll();
-        $this->assertCount(4, $classifications);
-
         $n = 1;
+    }
+
+    /**
+     * This tests
+     */
+    public function testModifiedRunThrough()
+    {
+        // @todo
     }
 }
