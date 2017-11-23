@@ -7,6 +7,39 @@
 
 This is a work in progress, which once complete will allow you to export the Tapestry project state to a database for manipulation by third party tools. In the case of Tapestry this is a precursor to the API plugin for an in browser admin panel.
 
+### Install
+
+To install run `composer require tapestry-cloud/database-plugin`
+
+### Setup
+
+Update your site configuration to include your database configuration:
+
+```php
+// ...
+    'plugins' => [
+        'database' => [
+            'driver' => 'pdo_sqlite',
+            'path' => __DIR__ . DIRECTORY_SEPARATOR . 'db.sqlite'
+        ]
+    ]
+// ...
+```
+
+Next within your site kernel.php you will need to register the plugins service provider within its boot method:
+
+```php
+public function boot(){
+    // ...
+    
+    $this->tapestry->register(\TapestryCloud\Database\ServiceProvider::class);
+    
+    // ...
+}
+```
+
+Upon you next running tapestry build your database will be updated with the current project state.
+
 ### Development
 
 To run migrations use:
