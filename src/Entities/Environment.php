@@ -14,10 +14,10 @@ class Environment
     /** @Column(type="string") */
     private $name;
 
-    /** @OneToMany(targetEntity="ContentType", mappedBy="environment_id") */
+    /** @OneToMany(targetEntity="ContentType", mappedBy="environment") */
     private $contentTypes;
 
-    /** @OneToMany(targetEntity="File", mappedBy="environment_id") */
+    /** @OneToMany(targetEntity="File", mappedBy="environment") */
     private $files;
 
     /**
