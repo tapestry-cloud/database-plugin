@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7e7507ef016365e67f5b765eab6455fc",
+    "content-hash": "7e6ec545b29781ba22c188197f3d3297",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2631,16 +2631,16 @@
         },
         {
             "name": "tapestry-cloud/tapestry",
-            "version": "dev-develop-1.0.11",
+            "version": "1.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tapestry-cloud/tapestry.git",
-                "reference": "780baddabf1f9e6320a55723f04de9dac6a02507"
+                "reference": "2f5f21b8cd2aa625687769887ea319c6e2fd9a76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tapestry-cloud/tapestry/zipball/780baddabf1f9e6320a55723f04de9dac6a02507",
-                "reference": "780baddabf1f9e6320a55723f04de9dac6a02507",
+                "url": "https://api.github.com/repos/tapestry-cloud/tapestry/zipball/2f5f21b8cd2aa625687769887ea319c6e2fd9a76",
+                "reference": "2f5f21b8cd2aa625687769887ea319c6e2fd9a76",
                 "shasum": ""
             },
             "require": {
@@ -2663,6 +2663,11 @@
                 "bin/tapestry.php"
             ],
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.12-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Tapestry\\": "src"
@@ -2688,7 +2693,7 @@
                 "site",
                 "static"
             ],
-            "time": "2017-09-23T13:20:05+00:00"
+            "time": "2017-11-23T11:41:48+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -2743,9 +2748,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "tapestry-cloud/tapestry": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
