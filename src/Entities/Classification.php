@@ -3,6 +3,7 @@
 namespace TapestryCloud\Database\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use TapestryCloud\Database\Repositories\ClassificationRepository;
 
 /**
  * @Entity
@@ -105,6 +106,16 @@ class Classification
     public function getFiles()
     {
         return $this->files;
+    }
+
+    /**
+     * @param ClassificationRepository $repository
+     * @param ContentType $contentType
+     * @return File[]
+     */
+    public function findFilesByContentType(ClassificationRepository $repository, ContentType $contentType)
+    {
+        return $repository->findFilesByContentType($contentType, $this);
     }
 
 }
