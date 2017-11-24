@@ -3,18 +3,16 @@
 namespace TapestryCloud\Database\Repositories;
 
 use Doctrine\ORM\EntityRepository;
-use TapestryCloud\Database\Entities\Classification;
 use TapestryCloud\Database\Entities\File;
-use TapestryCloud\Database\Entities\ContentType;
 
 class ClassificationRepository extends EntityRepository
 {
     /**
-     * @param ContentType $contentType
-     * @param Classification $classification
+     * @param int $contentTypeId
+     * @param int $classificationId
      * @return File[]
      */
-    public function findFilesByContentType(ContentType $contentType, Classification $classification)
+    public function findFilesByContentType($contentTypeId, $classificationId)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -24,8 +22,8 @@ class ClassificationRepository extends EntityRepository
             ->where('cf.file_id = f.id')
             ->where('cf.classification_id = ?1')
             ->where('f.contentType_id = ?2')
-            ->setParameter(1, $classification->getId())
-            ->setParameter(2, $contentType->getId());
+            ->setParameter(1, $classificationId)
+            ->setParameter(2, $contentTypeId);
 
         $query = $qb->getQuery();
         return $query->getResult();
