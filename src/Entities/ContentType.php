@@ -64,7 +64,7 @@ class ContentType
     /**
      * @var \Doctrine\Common\Collections\Collection|File[]
      *
-     * @@OneToMany(targetEntity="File", mappedBy="contentType")
+     * @OneToMany(targetEntity="File", mappedBy="contentType")
      */
     private $files;
 
