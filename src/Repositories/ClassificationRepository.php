@@ -9,7 +9,6 @@ use TapestryCloud\Database\Entities\ContentType;
 
 class ClassificationRepository extends EntityRepository
 {
-
     /**
      * @param ContentType $contentType
      * @param Classification $classification

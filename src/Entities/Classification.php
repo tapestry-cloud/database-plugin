@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use TapestryCloud\Database\Repositories\ClassificationRepository;
 
 /**
- * @Entity
+ * @Entity(repositoryClass="TapestryCloud\Database\Repositories\ClassificationRepository")
  * @Table(name="classifications")
  */
 class Classification
