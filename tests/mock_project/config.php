@@ -1,6 +1,7 @@
 <?php return [
+    'debug' => true,
     'site' => [
-        'url'         => 'http://localhost:3000',
+        'url' => 'http://localhost:3000',
     ],
 
     'kernel' => \Tests\MockProject\Kernel::class,
