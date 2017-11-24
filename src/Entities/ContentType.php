@@ -57,9 +57,16 @@ class ContentType
     /**
      * @var Collection|Taxonomy[]
      *
-     * @OneToMany(targetEntity="Taxonomy", mappedBy="contentType")
+     * @OneToMany(targetEntity="Taxonomy", mappedBy="contentType", cascade={"persist"})
      */
     private $taxonomy;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection|File[]
+     *
+     * @@OneToMany(targetEntity="File", mappedBy="contentType")
+     */
+    private $files;
 
     /**
      * ContentType constructor.
@@ -67,6 +74,7 @@ class ContentType
     public function __construct()
     {
         $this->taxonomy = new ArrayCollection();
+        $this->files = new ArrayCollection();
     }
 
     /**
@@ -101,12 +109,22 @@ class ContentType
         return $this->name;
     }
 
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
     /**
      * @return string
      */
     public function getPath()
     {
         return $this->path;
+    }
+
+    public function setPath($path)
+    {
+        $this->path = $path;
     }
 
     /**
@@ -117,6 +135,11 @@ class ContentType
         return $this->template;
     }
 
+    public function setTemplate($template)
+    {
+        $this->template = $template;
+    }
+
     /**
      * @return string
      */
@@ -125,12 +148,22 @@ class ContentType
         return $this->permalink;
     }
 
+    public function setPermalink($permalink)
+    {
+        $this->permalink = $permalink;
+    }
+
     /**
      * @return boolean
      */
     public function getEnabled()
     {
         return $this->enabled;
+    }
+
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
     }
 
     /**
@@ -181,4 +214,35 @@ class ContentType
 
         $this->taxonomy->removeElement($taxonomy);
     }
+
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    /**
+     * @param File $file
+     */
+    public function addFile(File $file)
+    {
+        if ($this->files->contains($file)) {
+            return;
+        }
+
+        $this->files->add($file);
+        //$file->setContentType($this);
+    }
+
+    /**
+     * @param File $file
+     */
+    public function removeFile(File $file)
+    {
+        if (!$this->files->contains($file)) {
+            return;
+        }
+
+        $this->files->removeElement($file);
+    }
+
 }

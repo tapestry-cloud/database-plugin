@@ -15,6 +15,7 @@ use Tapestry\Generator;
 use Tapestry\Tapestry;
 use TapestryCloud\Database\Entities\Classification;
 use TapestryCloud\Database\Entities\ContentType;
+use TapestryCloud\Database\Entities\Environment;
 use TapestryCloud\Database\Entities\File;
 use TapestryCloud\Database\Entities\Taxonomy;
 
@@ -62,14 +63,13 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         $tool->dropDatabase();
     }
 
-    public static function runTapestry($siteDir = __DIR__ . DIRECTORY_SEPARATOR . 'mock_project')
+    public static function runTapestry($env = 'testing', $siteDir = __DIR__ . DIRECTORY_SEPARATOR . 'mock_project')
     {
         $definitions = new DefaultInputDefinition();
         $tapestry = new Tapestry(new ArrayInput([
             '--site-dir' => $siteDir,
-            '--env' => 'testing'
+            '--env' => $env
         ], $definitions));
-
 
         $bufferedOutput = new BufferedOutput();
 
@@ -93,7 +93,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase
     {
         $loops = 0;
         while ($loops < 2) {
-            $output = self::runTapestry();
+            $output = self::runTapestry('testing');
             $this->assertContains('[$] Syncing with database.', $output->fetch());
 
             $contentTypes = self::$em->getRepository(ContentType::class)->findAll();
@@ -125,15 +125,25 @@ class PluginTest extends \PHPUnit_Framework_TestCase
             $this->assertCount(4, $classifications);
             $loops++;
         }
-
-        $n = 1;
     }
 
     /**
      * This tests
      */
-    public function testModifiedRunThrough()
+    public function testDifferentEnvironmentRunThrough()
     {
-        // @todo
+        $output = self::runTapestry('testing-1');
+        $this->assertContains('[$] Syncing with database.', $output->fetch());
+
+        $environments = self::$em->getRepository(Environment::class)->findAll();
+        $this->assertCount(2, $environments);
+
+        $contentTypes = self::$em->getRepository(ContentType::class)->findAll();
+        $this->assertCount(4, $contentTypes);
+
+        /** @var Environment $environment */
+        $environment = self::$em->getRepository(Environment::class)->findOneBy(['name' => 'testing-1']);
+        $this->assertNotNull($environment);
+        $this->assertSame('testing-1', $environment->getName());
     }
 }

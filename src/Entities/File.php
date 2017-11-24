@@ -66,9 +66,15 @@ class File
     private $environment;
 
     /**
+     * @var ContentType
+     * @ManyToOne(targetEntity="ContentType")
+     */
+    private $contentType;
+
+    /**
      * @var Collection|Classification[]
      *
-     * @ManyToMany(targetEntity="Classification", inversedBy="files")
+     * @ManyToMany(targetEntity="Classification", inversedBy="files", cascade={"persist"})
      * @JoinTable(
      *  name="classifications_files",
      *  joinColumns={
@@ -114,6 +120,19 @@ class File
     public function setEnvironment(Environment $environment)
     {
         $this->environment = $environment;
+    }
+
+    public function getContentType()
+    {
+        return $this->contentType;
+    }
+
+    /**
+     * @param ContentType $contentType
+     */
+    public function setContentType(ContentType $contentType)
+    {
+        $this->contentType = $contentType;
     }
 
     public function addFrontMatter(FrontMatter $frontMatter)

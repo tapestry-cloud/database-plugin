@@ -10,15 +10,15 @@ use TapestryCloud\Database\Entities\File as Model;
 
 class File extends Hydrator
 {
-
     /**
      * File Hydration.
      *
      * @param Model $model
      * @param \Tapestry\Entities\File $file
-     * @param Environment|null $environment
+     * @param \TapestryCloud\Database\Entities\ContentType $contentType
+     * @param null|Environment $environment
      */
-    public function hydrate(Model $model, \Tapestry\Entities\File $file, Environment $environment = null)
+    public function hydrate(Model $model, \Tapestry\Entities\File $file, \TapestryCloud\Database\Entities\ContentType $contentType = null, Environment $environment = null)
     {
         $model->setUid($file->getUid());
         $model->setLastModified($file->getLastModified());
@@ -38,6 +38,10 @@ class File extends Hydrator
 
                 $this->entityManager->persist($fmRecord);
             }
+        }
+
+        if (!is_null($contentType)) {
+            $model->setContentType($contentType);
         }
 
         if (!is_null($environment)) {

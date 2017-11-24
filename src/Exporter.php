@@ -10,9 +10,12 @@ use Tapestry\Entities\Project;
 use Tapestry\Modules\ContentTypes\ContentTypeFactory;
 use Tapestry\Tapestry;
 use TapestryCloud\Database\Entities\Environment;
-use TapestryCloud\Database\Synchronizes\ContentTypes;
-use TapestryCloud\Database\Synchronizes\Files;
+use TapestryCloud\Database\Synchronizes\ContentTypeSync;
+use TapestryCloud\Database\Synchronizes\FileSync;
 use TapestryCloud\Database\Hydrators\File as FileHydrator;
+use TapestryCloud\Database\Hydrators\ContentType as ContentTypeHydrator;
+use TapestryCloud\Database\Hydrators\Taxonomy as TaxonomyHydrator;
+use TapestryCloud\Database\Synchronizes\TaxonomySync;
 
 class Exporter
 {
@@ -58,10 +61,30 @@ class Exporter
             $this->entityManager->flush();
         }
 
-        $fileSync = new Files($this->entityManager, new FileHydrator($this->entityManager));
+        // 1. Sync Content Types Base
+        $contentTypeSync = new ContentTypeSync(
+            $this->entityManager,
+            new ContentTypeHydrator($this->entityManager),
+            new TaxonomyHydrator($this->entityManager)
+        );
+        $contentTypeSync->sync($contentTypes, $environment);
+
+        // 2. Sync Files
+        $fileSync = new FileSync(
+            $this->entityManager,
+            new FileHydrator($this->entityManager)
+        );
         $fileSync->sync($files, $environment);
 
-        $contentTypeSync = new ContentTypes($this->entityManager);
-        $contentTypeSync->sync($contentTypes, $environment);
+        // 3. Sync Taxonomy foreach Content Type
+        // 4. Sync Classifications foreach Taxonomy - attaching Files
+
+        $taxonomySync = new TaxonomySync(
+            $this->entityManager,
+            new ContentTypeHydrator($this->entityManager),
+            new TaxonomyHydrator($this->entityManager)
+        );
+        $taxonomySync->sync($contentTypes, $environment);
+
     }
 }

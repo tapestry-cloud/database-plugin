@@ -19,7 +19,7 @@ class Classification
     /**
      * @var \Doctrine\Common\Collections\Collection|Taxonomy[]
      *
-     * @ManyToMany(targetEntity="Taxonomy", inversedBy="classification")
+     * @ManyToMany(targetEntity="Taxonomy", inversedBy="classification",cascade={"persist"})
      * @JoinTable(
      *  name="classifications_taxonomy",
      *  joinColumns={

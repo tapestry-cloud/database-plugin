@@ -30,14 +30,14 @@ class Taxonomy
     /**
      * @var ContentType
      *
-     * @ManyToOne(targetEntity="ContentType", inversedBy="taxonomy")
+     * @ManyToOne(targetEntity="ContentType", inversedBy="taxonomy", cascade={"persist"})
      */
     private $contentType;
 
     /**
      * @var Collection|Classification[]
      *
-     * @ManyToMany(targetEntity="Classification", mappedBy="taxonomy")
+     * @ManyToMany(targetEntity="Classification", mappedBy="taxonomy", cascade={"persist"})
      */
     private $classifications;
 

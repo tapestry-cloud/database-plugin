@@ -5,11 +5,12 @@ namespace TapestryCloud\Database\Synchronizes;
 use Doctrine\ORM\EntityManagerInterface;
 use Tapestry\Entities\Collections\FlatCollection;
 use Tapestry\Entities\File as TapestryFile;
+use TapestryCloud\Database\Entities\ContentType;
 use TapestryCloud\Database\Entities\Environment;
 use TapestryCloud\Database\Entities\File;
 use TapestryCloud\Database\Hydrators\File as FileHydrator;
 
-class Files
+class FileSync
 {
     /**
      * @var EntityManagerInterface
@@ -34,15 +35,18 @@ class Files
 
     public function sync(FlatCollection $files, Environment $environment)
     {
-
         /** @var TapestryFile $file */
         foreach ($files as $file) {
+            $contentTypeName = $file->getData('contentType', 'default');
+            if (!$contentType = $this->em->getRepository(ContentType::class)->findOneBy(['name' => $contentTypeName, 'environment' => $environment->getId()])) {
+                throw new \Exception('The content type ['. $contentTypeName .'] has not been seeded.');
+            }
 
             if (!$record = $this->em->getRepository(File::class)->findOneBy(['uid' => $file->getuid(), 'environment' => $environment->getId()])) {
                 $record = new File();
             }
 
-            $this->fileHydrator->hydrate($record, $file, $environment);
+            $this->fileHydrator->hydrate($record, $file, $contentType, $environment);
             $this->em->persist($record);
         }
 

@@ -10,8 +10,10 @@ use TapestryCloud\Database\Entities\ContentType;
 use TapestryCloud\Database\Entities\Environment;
 use TapestryCloud\Database\Entities\File;
 use TapestryCloud\Database\Entities\Taxonomy;
+use TapestryCloud\Database\Hydrators\ContentType as ContentTypeHydrator;
+use TapestryCloud\Database\Hydrators\Taxonomy as TaxonomyHydrator;
 
-class ContentTypes
+class TaxonomySync
 {
     /**
      * @var EntityManagerInterface
@@ -19,30 +21,42 @@ class ContentTypes
     private $em;
 
     /**
+     * @var ContentTypeHydrator
+     */
+    private $contentTypeHydrator;
+
+    /**
+     * @var TaxonomyHydrator
+     */
+    private $taxonomyHydrator;
+
+    /**
      * ContentTypes constructor.
      * @param EntityManagerInterface $em
+     * @param ContentTypeHydrator $contentTypeHydrator
+     * @param TaxonomyHydrator $taxonomyHydrator
      */
-    public function __construct(EntityManagerInterface $em)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        ContentTypeHydrator $contentTypeHydrator,
+        TaxonomyHydrator $taxonomyHydrator
+    ){
         $this->em = $em;
+        $this->contentTypeHydrator = $contentTypeHydrator;
+        $this->taxonomyHydrator = $taxonomyHydrator;
     }
 
     public function sync(ContentTypeFactory $contentTypeFactory, Environment $environment)
     {
         foreach ($contentTypeFactory->all() as $contentType) {
+            /** @var ContentType $record */
             if (!$record = $this->em->getRepository(ContentType::class)->findOneBy(['name' => $contentType->getName(), 'environment' => $environment->getId()])) {
-                // INSERT
-                $record = new ContentType();
-                $record->hydrate($contentType, $environment);
-                $this->em->persist($record);
-                $this->em->flush();
-
-                $this->syncTaxonomyToContentType($record, $contentType->getTaxonomies(), $environment);
-                continue;
+                throw new \Exception('The content type ['. $contentType->getName() .'] has not been seeded.');
             }
 
-            // UPDATE
+            $this->syncTaxonomyToContentType($record, $contentType->getTaxonomies(), $environment);
         }
+        $this->em->flush();
     }
 
     /**
@@ -54,37 +68,33 @@ class ContentTypes
     {
         /** @var TapestryTaxonomy $taxonomy */
         foreach ($taxonomies as $taxonomy) {
-            if (!$record = $this->em->getRepository(Taxonomy::class)->findOneBy(['name' => $taxonomy->getName()])) {
+            if (!$record = $this->em->getRepository(Taxonomy::class)->findOneBy(['name' => $taxonomy->getName(), 'contentType' => $contentType])) {
                 $record = new Taxonomy();
-                $record->hydrate($taxonomy);
-                $this->em->persist($record);
-                $this->em->flush();
-
-                $contentType->addTaxonomy($record);
-                $this->em->persist($contentType);
-                $this->em->flush();
             }
+
+            $this->taxonomyHydrator->hydrate($record, $taxonomy);
+            $contentType->addTaxonomy($record);
+
+            //$this->em->persist($contentType);
 
             foreach ($taxonomy->getFileList() as $classification => $files) {
                 if (!$classificationRecord = $this->em->getRepository(Classification::class)->findOneBy(['name' => $classification])) {
                     $classificationRecord = new Classification();
                     $classificationRecord->setName($classification);
-                    $this->em->persist($classificationRecord);
+                    //$this->em->persist($classificationRecord);
                 }
 
                 $classificationRecord->addTaxonomy($record);
-                $this->em->flush();
 
                 foreach (array_keys($files) as $filename) {
                     /** @var File $file */
-                    if ($file = $this->em->getRepository(File::class)->findOneBy(['uid' => $filename, 'environment' => $environment->getId()])) {
+                    if ($file = $this->em->getRepository(File::class)->findOneBy(['uid' => $filename, 'environment' => $environment])) {
                         $file->addClassification($classificationRecord);
-                        $this->em->persist($file);
+                        //$this->em->persist($file);
                     }
                 }
-
-                $this->em->flush();
             }
         }
+        $this->em->flush();
     }
 }
