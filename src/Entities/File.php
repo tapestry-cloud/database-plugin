@@ -49,7 +49,7 @@ class File
 
     /**
      * @var string
-     * @Column(type="text")
+     * @Column(type="text", nullable=true)
      */
     private $content;
 

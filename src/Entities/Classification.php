@@ -91,4 +91,20 @@ class Classification
         $this->taxonomy->removeElement($taxonomy);
     }
 
+    /**
+     * @return \Doctrine\Common\Collections\Collection|Taxonomy[]
+     */
+    public function getTaxonomy()
+    {
+        return $this->taxonomy;
+    }
+
+    /**
+     * @return \Doctrine\Common\Collections\Collection|File[]
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
 }
