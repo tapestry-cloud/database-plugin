@@ -135,6 +135,9 @@ class File
         $this->contentType = $contentType;
     }
 
+    /**
+     * @param FrontMatter $frontMatter
+     */
     public function addFrontMatter(FrontMatter $frontMatter)
     {
         if ($this->frontMatter->contains($frontMatter)) {
@@ -143,6 +146,14 @@ class File
 
         $this->frontMatter->add($frontMatter);
         $frontMatter->setFile($this);
+    }
+
+    /**
+     * @return Collection|FrontMatter[]
+     */
+    public function getFrontMatter()
+    {
+        return $this->frontMatter;
     }
 
     /**
