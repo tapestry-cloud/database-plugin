@@ -16,14 +16,12 @@ class ClassificationRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->from(File::class, 'f')
-            ->select(['f'])
-            ->leftJoin('classification_files', 'cf')
-            ->where('cf.file_id = f.id')
-            ->where('cf.classification_id = ?1')
-            ->where('f.contentType_id = ?2')
-            ->setParameter(1, $classificationId)
-            ->setParameter(2, $contentTypeId);
+        $qb->select('f')
+            ->from(File::class, 'f')
+            ->innerJoin('f.classifications', 'c', 'WITH', 'c.id = :classificationId')
+            ->where('f.contentType = :contentTypeId')
+            ->setParameter('classificationId', $classificationId)
+            ->setParameter('contentTypeId', $contentTypeId);
 
         $query = $qb->getQuery();
         return $query->getResult();
