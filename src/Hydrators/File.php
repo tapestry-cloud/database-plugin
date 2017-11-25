@@ -26,6 +26,8 @@ class File extends Hydrator
         $model->setExt($file->getExt());
         $model->setPath($file->getPath());
         $model->setToCopy($file->isToCopy());
+        $model->setDate($file->getData('date')->getTimestamp());
+        $model->setIsDraft($file->getData('draft', false));
 
         if (!$file->isToCopy()) {
             $frontMatter = new TapestryFrontMatter($file->getFileContent());
