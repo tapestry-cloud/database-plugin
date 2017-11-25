@@ -30,6 +30,12 @@ class File
     private $lastModified;
 
     /**
+     * @var int
+     * @Column(type="integer")
+     */
+    private $date;
+
+    /**
      * @var string
      * @Column(type="string")
      */
@@ -58,6 +64,12 @@ class File
      * @Column(type="boolean")
      */
     private $toCopy;
+
+    /**
+     * @var bool
+     * @Column(type="boolean")
+     */
+    private $isDraft;
 
     /**
      * @var Environment
@@ -205,6 +217,16 @@ class File
         $this->uid = $uid;
     }
 
+    public function setDate($date)
+    {
+        $this->date = $date;
+    }
+
+    public function getDate()
+    {
+        return $this->date;
+    }
+
     /**
      * @return int
      */
@@ -299,5 +321,21 @@ class File
     public function setContent($content)
     {
         $this->content = $content;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDraft()
+    {
+        return $this->isDraft;
+    }
+
+    /**
+     * @param bool $isDraft
+     */
+    public function setIsDraft($isDraft)
+    {
+        $this->isDraft = $isDraft;
     }
 }
