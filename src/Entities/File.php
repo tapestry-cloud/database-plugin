@@ -72,12 +72,6 @@ class File
     private $isDraft;
 
     /**
-     * @var Environment
-     * @ManyToOne(targetEntity="Environment")
-     */
-    private $environment;
-
-    /**
      * @var ContentType
      * @ManyToOne(targetEntity="ContentType")
      */
@@ -117,22 +111,6 @@ class File
     //
     // Relationships
     //
-
-    /**
-     * @return Environment
-     */
-    public function getEnvironment()
-    {
-        return $this->environment;
-    }
-
-    /**
-     * @param Environment $environment
-     */
-    public function setEnvironment(Environment $environment)
-    {
-        $this->environment = $environment;
-    }
 
     public function getContentType()
     {

@@ -3,7 +3,6 @@
 namespace TapestryCloud\Database\Hydrators;
 
 use Tapestry\Modules\Content\FrontMatter as TapestryFrontMatter;
-use TapestryCloud\Database\Entities\Environment;
 use TapestryCloud\Database\Entities\FrontMatter;
 use TapestryCloud\Database\Entities\File as Model;
 
@@ -16,9 +15,8 @@ class File extends Hydrator
      * @param Model $model
      * @param \Tapestry\Entities\File $file
      * @param \TapestryCloud\Database\Entities\ContentType $contentType
-     * @param null|Environment $environment
      */
-    public function hydrate(Model $model, \Tapestry\Entities\File $file, \TapestryCloud\Database\Entities\ContentType $contentType = null, Environment $environment = null)
+    public function hydrate(Model $model, \Tapestry\Entities\File $file, \TapestryCloud\Database\Entities\ContentType $contentType = null)
     {
         $model->setUid($file->getUid());
         $model->setLastModified($file->getLastModified());
@@ -44,10 +42,6 @@ class File extends Hydrator
 
         if (!is_null($contentType)) {
             $model->setContentType($contentType);
-        }
-
-        if (!is_null($environment)) {
-            $model->setEnvironment($environment);
         }
     }
 

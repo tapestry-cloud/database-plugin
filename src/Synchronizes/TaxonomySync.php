@@ -7,7 +7,6 @@ use Tapestry\Entities\Taxonomy as TapestryTaxonomy;
 use Tapestry\Modules\ContentTypes\ContentTypeFactory;
 use TapestryCloud\Database\Entities\Classification;
 use TapestryCloud\Database\Entities\ContentType;
-use TapestryCloud\Database\Entities\Environment;
 use TapestryCloud\Database\Entities\File;
 use TapestryCloud\Database\Entities\Taxonomy;
 use TapestryCloud\Database\Hydrators\ContentType as ContentTypeHydrator;
@@ -46,15 +45,15 @@ class TaxonomySync
         $this->taxonomyHydrator = $taxonomyHydrator;
     }
 
-    public function sync(ContentTypeFactory $contentTypeFactory, Environment $environment)
+    public function sync(ContentTypeFactory $contentTypeFactory)
     {
         foreach ($contentTypeFactory->all() as $contentType) {
             /** @var ContentType $record */
-            if (!$record = $this->em->getRepository(ContentType::class)->findOneBy(['name' => $contentType->getName(), 'environment' => $environment->getId()])) {
+            if (!$record = $this->em->getRepository(ContentType::class)->findOneBy(['name' => $contentType->getName()])) {
                 throw new \Exception('The content type ['. $contentType->getName() .'] has not been seeded.');
             }
 
-            $this->syncTaxonomyToContentType($record, $contentType->getTaxonomies(), $environment);
+            $this->syncTaxonomyToContentType($record, $contentType->getTaxonomies());
         }
         $this->em->flush();
     }
@@ -62,9 +61,8 @@ class TaxonomySync
     /**
      * @param ContentType $contentType
      * @param TapestryTaxonomy[] $taxonomies
-     * @param Environment $environment
      */
-    private function syncTaxonomyToContentType(ContentType $contentType, array $taxonomies, Environment $environment)
+    private function syncTaxonomyToContentType(ContentType $contentType, array $taxonomies)
     {
         /** @var TapestryTaxonomy $taxonomy */
         foreach ($taxonomies as $taxonomy) {
@@ -88,7 +86,7 @@ class TaxonomySync
 
                 foreach (array_keys($files) as $filename) {
                     /** @var File $file */
-                    if ($file = $this->em->getRepository(File::class)->findOneBy(['uid' => $filename, 'environment' => $environment])) {
+                    if ($file = $this->em->getRepository(File::class)->findOneBy(['uid' => $filename])) {
                         $file->addClassification($classificationRecord);
                         //$this->em->persist($file);
                     }

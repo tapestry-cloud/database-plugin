@@ -19,12 +19,6 @@ class ContentType
     private $id;
 
     /**
-     * @var Environment
-     * @ManyToOne(targetEntity="Environment")
-     */
-    private $environment;
-
-    /**
      * @var string
      * @Column(type="string")
      */
@@ -81,16 +75,14 @@ class ContentType
      * ContentType Hydration
      *
      * @param TapestryContentType $contentType
-     * @param Environment $environment
      */
-    public function hydrate(TapestryContentType $contentType, Environment $environment)
+    public function hydrate(TapestryContentType $contentType)
     {
         $this->name = $contentType->getName();
         $this->path = $contentType->getPath();
         $this->template = $contentType->getTemplate();
         $this->permalink = $contentType->getPermalink();
         $this->enabled = $contentType->isEnabled();
-        $this->setEnvironment($environment);
     }
 
     /**
@@ -164,22 +156,6 @@ class ContentType
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
-    }
-
-    /**
-     * @return Environment
-     */
-    public function getEnvironment()
-    {
-        return $this->environment;
-    }
-
-    /**
-     * @param Environment $environment
-     */
-    public function setEnvironment(Environment $environment)
-    {
-        $this->environment = $environment;
     }
 
     /**
