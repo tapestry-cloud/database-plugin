@@ -9,7 +9,6 @@ use Tapestry\Entities\Collections\FlatCollection;
 use Tapestry\Entities\Project;
 use Tapestry\Modules\ContentTypes\ContentTypeFactory;
 use Tapestry\Tapestry;
-use TapestryCloud\Database\Entities\Environment;
 use TapestryCloud\Database\Synchronizes\ContentTypeSync;
 use TapestryCloud\Database\Synchronizes\FileSync;
 use TapestryCloud\Database\Hydrators\File as FileHydrator;
@@ -54,27 +53,20 @@ class Exporter
         /** @var array $cmdOptions */
         $cmdOptions = $project->get('cmd_options');
 
-        if (!$environment = $this->entityManager->getRepository(Environment::class)->findOneBy(['name' => $cmdOptions['env']])) {
-            $environment = new Environment();
-            $environment->setName($cmdOptions['env']);
-            $this->entityManager->persist($environment);
-            $this->entityManager->flush();
-        }
-
         // 1. Sync Content Types Base
         $contentTypeSync = new ContentTypeSync(
             $this->entityManager,
             new ContentTypeHydrator($this->entityManager),
             new TaxonomyHydrator($this->entityManager)
         );
-        $contentTypeSync->sync($contentTypes, $environment);
+        $contentTypeSync->sync($contentTypes);
 
         // 2. Sync Files
         $fileSync = new FileSync(
             $this->entityManager,
             new FileHydrator($this->entityManager)
         );
-        $fileSync->sync($files, $environment);
+        $fileSync->sync($files);
 
         // 3. Sync Taxonomy foreach Content Type
         // 4. Sync Classifications foreach Taxonomy - attaching Files
@@ -84,7 +76,6 @@ class Exporter
             new ContentTypeHydrator($this->entityManager),
             new TaxonomyHydrator($this->entityManager)
         );
-        $taxonomySync->sync($contentTypes, $environment);
-
+        $taxonomySync->sync($contentTypes);
     }
 }

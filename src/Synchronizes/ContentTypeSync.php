@@ -3,13 +3,8 @@
 namespace TapestryCloud\Database\Synchronizes;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Tapestry\Entities\Taxonomy as TapestryTaxonomy;
 use Tapestry\Modules\ContentTypes\ContentTypeFactory;
-use TapestryCloud\Database\Entities\Classification;
 use TapestryCloud\Database\Entities\ContentType;
-use TapestryCloud\Database\Entities\Environment;
-use TapestryCloud\Database\Entities\File;
-use TapestryCloud\Database\Entities\Taxonomy;
 use TapestryCloud\Database\Hydrators\ContentType as ContentTypeHydrator;
 use TapestryCloud\Database\Hydrators\Taxonomy as TaxonomyHydrator;
 
@@ -45,14 +40,14 @@ class ContentTypeSync
         $this->taxonomyHydrator = $taxonomyHydrator;
     }
 
-    public function sync(ContentTypeFactory $contentTypeFactory, Environment $environment)
+    public function sync(ContentTypeFactory $contentTypeFactory)
     {
         foreach ($contentTypeFactory->all() as $contentType) {
-            if (!$record = $this->em->getRepository(ContentType::class)->findOneBy(['name' => $contentType->getName(), 'environment' => $environment->getId()])) {
+            if (!$record = $this->em->getRepository(ContentType::class)->findOneBy(['name' => $contentType->getName()])) {
                 $record = new ContentType();
             }
 
-            $this->contentTypeHydrator->hydrate($record, $contentType, $environment);
+            $this->contentTypeHydrator->hydrate($record, $contentType);
             $this->em->persist($record);
         }
         $this->em->flush();

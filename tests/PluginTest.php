@@ -101,9 +101,6 @@ class PluginTest extends \PHPUnit_Framework_TestCase
 
             /** @var ContentType $contentType */
             foreach ($contentTypes as $contentType) {
-                $env = $contentType->getEnvironment();
-                $this->assertEquals('testing', $env->getName());
-
                 if ($contentType->getName() === 'blog') {
                     $taxonomies = $contentType->getTaxonomy();
                     $this->assertCount(2, $taxonomies);
@@ -135,15 +132,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         $output = self::runTapestry('testing-1');
         $this->assertContains('[$] Syncing with database.', $output->fetch());
 
-        $environments = self::$em->getRepository(Environment::class)->findAll();
-        $this->assertCount(2, $environments);
-
         $contentTypes = self::$em->getRepository(ContentType::class)->findAll();
-        $this->assertCount(4, $contentTypes);
-
-        /** @var Environment $environment */
-        $environment = self::$em->getRepository(Environment::class)->findOneBy(['name' => 'testing-1']);
-        $this->assertNotNull($environment);
-        $this->assertSame('testing-1', $environment->getName());
+        $this->assertCount(2, $contentTypes);
     }
 }
