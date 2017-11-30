@@ -31,6 +31,8 @@ class Exporter
      * Exporter constructor.
      * @param EntityManagerInterface $entityManager
      * @param Tapestry $tapestry
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __construct(EntityManagerInterface $entityManager, Tapestry $tapestry)
     {
@@ -39,6 +41,10 @@ class Exporter
 
     }
 
+    /**
+     * @param Project $project
+     * @throws \Exception
+     */
     public function export(Project $project)
     {
 
