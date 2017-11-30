@@ -147,6 +147,32 @@ class File
     }
 
     /**
+     * @return array
+     */
+    public function getFrontMatterKeys()
+    {
+        $keys = [];
+
+        /** @var FrontMatter $frontMatter */
+        foreach ($this->frontMatter->getValues() as $frontMatter) {
+            array_push($keys, $frontMatter->getName());
+        }
+        return $keys;
+    }
+
+    public function getFrontMatterByKey($key, $default = null)
+    {
+        /** @var FrontMatter $frontMatter */
+        foreach ($this->frontMatter->getValues() as $frontMatter) {
+            if ($frontMatter->getName() === $key) {
+                return $frontMatter;
+            }
+        }
+
+        return $default;
+    }
+
+    /**
      * @param Classification $classification
      */
     public function addClassification(Classification $classification)

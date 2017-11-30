@@ -30,9 +30,29 @@ class File extends Hydrator
         if (!$file->isToCopy()) {
             $frontMatter = new TapestryFrontMatter($file->getFileContent());
             $model->setContent($frontMatter->getContent());
+
+            $inFile = [];
+            foreach (array_keys($frontMatter->getData()) as $inFileKey) {
+                $inFile[$inFileKey] = 1;
+            }
+
+            $inDatabase = [];
+            foreach ($model->getFrontMatterKeys() as $inDatabaseKey) {
+                if (isset($inFile[$inDatabaseKey])) {
+                    $inDatabase[$inDatabaseKey] = 1;
+                } else {
+                    $inDatabase[$inDatabaseKey] = -1; //@todo remove frontmatter from db when missing from file
+                }
+            }
+
             foreach ($frontMatter->getData() as $key => $value) {
                 $fmRecord = new FrontMatter();
                 $fmRecord->setName($key);
+
+                if (isset($inDatabase[$key])){
+                    $fmRecord = $model->getFrontMatterByKey($key, $fmRecord);
+                }
+
                 $fmRecord->setValue(json_encode($value));
                 $model->addFrontMatter($fmRecord);
 

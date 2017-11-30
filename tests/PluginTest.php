@@ -7,7 +7,6 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\NullOutput;
 use Tapestry\Console\DefaultInputDefinition;
 use Tapestry\Entities\Configuration;
 use Tapestry\Entities\Project;
@@ -15,8 +14,8 @@ use Tapestry\Generator;
 use Tapestry\Tapestry;
 use TapestryCloud\Database\Entities\Classification;
 use TapestryCloud\Database\Entities\ContentType;
-use TapestryCloud\Database\Entities\Environment;
 use TapestryCloud\Database\Entities\File;
+use TapestryCloud\Database\Entities\FrontMatter;
 use TapestryCloud\Database\Entities\Taxonomy;
 
 class PluginTest extends \PHPUnit_Framework_TestCase
@@ -118,8 +117,14 @@ class PluginTest extends \PHPUnit_Framework_TestCase
             $files = self::$em->getRepository(File::class)->findAll();
             $this->assertCount(3, $files);
 
+            $files = self::$em->getRepository(FrontMatter::class)->findAll();
+            $this->assertCount(4, $files);
+
             $classifications = self::$em->getRepository(Classification::class)->findAll();
             $this->assertCount(4, $classifications);
+
+            $contentTypes = self::$em->getRepository(ContentType::class)->findAll();
+            $this->assertCount(2, $contentTypes);
             $loops++;
         }
     }
@@ -131,6 +136,15 @@ class PluginTest extends \PHPUnit_Framework_TestCase
     {
         $output = self::runTapestry('testing-1');
         $this->assertContains('[$] Syncing with database.', $output->fetch());
+
+        $files = self::$em->getRepository(File::class)->findAll();
+        $this->assertCount(3, $files);
+
+        $files = self::$em->getRepository(FrontMatter::class)->findAll();
+        $this->assertCount(4, $files);
+
+        $classifications = self::$em->getRepository(Classification::class)->findAll();
+        $this->assertCount(4, $classifications);
 
         $contentTypes = self::$em->getRepository(ContentType::class)->findAll();
         $this->assertCount(2, $contentTypes);
