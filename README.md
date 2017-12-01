@@ -1,9 +1,11 @@
-# Tapestry Database Plugin
+<h1 align="center">Tapestry Database Plugin</h1>
+<p align="center"><em>Syncs project state with database</em></p>
 
-[![Build Status](https://travis-ci.org/tapestry-cloud/database-plugin.svg?branch=master)](https://travis-ci.org/tapestry-cloud/database-plugin)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net/)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.carloscuesta.me)
+<p align="center">
+  <a href="https://travis-ci.org/tapestry-cloud/database-plugin"><img src="https://travis-ci.org/tapestry-cloud/database-plugin.svg" alt="Build Status"></a>
+  <a href="https://packagist.org/packages/tapestry-cloud/database-plugin"><img src="https://poser.pugx.org/tapestry-cloud/database-plugin/v/stable.svg" alt="Latest Stable Version"></a>
+  <a href="LICENSE"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
+</p>
 
 This is a work in progress, which once complete will allow you to export the Tapestry project state to a database for manipulation by third party tools. In the case of Tapestry this is a precursor to the API plugin for an in browser admin panel.
 
