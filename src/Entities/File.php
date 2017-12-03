@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 /**
- * @Entity
+ * @Entity(repositoryClass="TapestryCloud\Database\Repositories\FileRepository")
  * @Table(name="files")
  */
 class File
@@ -194,6 +194,14 @@ class File
         }
 
         $this->classifications->removeElement($classification);
+    }
+
+    /**
+     * @return ArrayCollection|Collection|Classification[]
+     */
+    public function getClassifications()
+    {
+        return $this->classifications;
     }
 
     //
